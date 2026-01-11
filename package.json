@@ -1,13 +1,28 @@
 {
   "name": "text-transform",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Developer-focused text and data transformation toolkit",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run typecheck && npm run lint"
   },
+  "keywords": [
+    "text-transform",
+    "developer-tools",
+    "camelcase",
+    "snake-case",
+    "json-formatter",
+    "base64",
+    "encoding"
+  ],
+  "author": "Robert David Orr",
+  "license": "MIT",
   "dependencies": {
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -23,5 +38,8 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
     "@eslint/eslintrc": "^3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
