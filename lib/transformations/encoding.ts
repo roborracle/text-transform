@@ -6,7 +6,7 @@
  * Base64 encode
  */
 export function base64Encode(input: string): string {
-  if (typeof window !== 'undefined' && window.btoa) {
+  if (typeof window !== 'undefined' && typeof window.btoa === 'function') {
     return btoa(unescape(encodeURIComponent(input)))
   }
   return Buffer.from(input, 'utf-8').toString('base64')
@@ -17,11 +17,11 @@ export function base64Encode(input: string): string {
  */
 export function base64Decode(input: string): string {
   try {
-    if (typeof window !== 'undefined' && window.atob) {
+    if (typeof window !== 'undefined' && typeof window.atob === 'function') {
       return decodeURIComponent(escape(atob(input)))
     }
     return Buffer.from(input, 'base64').toString('utf-8')
-  } catch (error) {
+  } catch {
     return 'Invalid Base64 input'
   }
 }

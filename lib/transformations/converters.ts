@@ -10,7 +10,7 @@ export function csvToJSON(input: string, hasHeader: boolean = true): string {
     const lines = input.trim().split('\n')
     if (lines.length === 0) return '[]'
 
-    const result: any[] = []
+    const result: Array<Record<string, string> | string[]> = []
     let headers: string[] = []
 
     if (hasHeader) {
@@ -18,7 +18,7 @@ export function csvToJSON(input: string, hasHeader: boolean = true): string {
       for (let i = 1; i < lines.length; i++) {
         const values = parseCSVLine(lines[i])
         if (values.length === headers.length) {
-          const obj: any = {}
+          const obj: Record<string, string> = {}
           headers.forEach((header, index) => {
             obj[header] = values[index]
           })
@@ -82,12 +82,13 @@ export function xmlToJSON(input: string): string {
   try {
     // Simple XML to JSON converter
     // In production, use a proper XML parser
-    const result: any = {}
-
     // Remove XML declaration
-    let xml = input.replace(/<\?xml[^>]*\?>/g, '').trim()
+    const xml = input.replace(/<\?xml[^>]*\?>/g, '').trim()
 
-    function parseElement(xmlStr: string): any {
+    type XmlJsonValue = string | number | boolean | null | XmlJsonObject | XmlJsonValue[]
+    type XmlJsonObject = { [key: string]: XmlJsonValue }
+
+    function parseElement(xmlStr: string): XmlJsonObject | string {
       const tagMatch = xmlStr.match(/^<([^\s>]+)([^>]*)>/)
       if (!tagMatch) return xmlStr
 
@@ -103,7 +104,7 @@ export function xmlToJSON(input: string): string {
       const content = xmlStr.substring(tagMatch[0].length, closeIndex)
 
       // Parse attributes
-      const attrs: any = {}
+      const attrs: XmlJsonObject = {}
       const attrRegex = /(\w+)="([^"]*)"/g
       let attrMatch
       while ((attrMatch = attrRegex.exec(attributes)) !== null) {
@@ -113,7 +114,7 @@ export function xmlToJSON(input: string): string {
       // Check if content has child elements
       if (content.includes('<')) {
         // Has child elements
-        const children: any = { ...attrs }
+        const children: XmlJsonObject = { ...attrs }
         const childRegex = /<([^\s>]+)[^>]*>[\s\S]*?<\/\1>/g
         let childMatch
         while ((childMatch = childRegex.exec(content)) !== null) {
@@ -122,9 +123,11 @@ export function xmlToJSON(input: string): string {
           if (children[childTag]) {
             // Multiple children with same tag
             if (!Array.isArray(children[childTag])) {
-              children[childTag] = [children[childTag]]
+              children[childTag] = [children[childTag] as XmlJsonValue]
             }
-            children[childTag].push(childResult[childTag])
+            const childArray = children[childTag] as XmlJsonValue[]
+            const childObj = childResult as XmlJsonObject
+            childArray.push(childObj[childTag])
           } else {
             Object.assign(children, childResult)
           }
@@ -154,7 +157,7 @@ export function jsonToXML(input: string): string {
   try {
     const obj = JSON.parse(input)
 
-    function toXML(obj: any, rootName: string = 'root'): string {
+    function toXML(obj: unknown, rootName: string = 'root'): string {
       let xml = ''
 
       if (Array.isArray(obj)) {
@@ -165,7 +168,7 @@ export function jsonToXML(input: string): string {
         const attrs: string[] = []
         const children: string[] = []
 
-        Object.entries(obj).forEach(([key, value]) => {
+        Object.entries(obj as Record<string, unknown>).forEach(([key, value]) => {
           if (key.startsWith('@')) {
             // Attribute
             attrs.push(`${key.substring(1)}="${value}"`)
@@ -235,7 +238,7 @@ export function markdownToHTML(input: string): string {
 
   // Lists
   html = html.replace(/^\* (.+)$/gm, '<li>$1</li>')
-  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+  html = html.replace(/(<li>[\s\S]*?<\/li>)/, '<ul>$1</ul>')
 
   // Numbered lists
   html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>')

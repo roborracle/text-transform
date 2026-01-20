@@ -187,16 +187,17 @@ export function generateTestCreditCard(type: 'visa' | 'mastercard' | 'amex' = 'v
   }
 
   // Calculate Luhn check digit
+  // The last digit of partial number is at position 2 in final number, so start doubling
   let sum = 0
-  let isEven = false
+  let shouldDouble = true
   for (let i = number.length - 1; i >= 0; i--) {
     let digit = parseInt(number[i])
-    if (isEven) {
+    if (shouldDouble) {
       digit *= 2
       if (digit > 9) digit -= 9
     }
     sum += digit
-    isEven = !isEven
+    shouldDouble = !shouldDouble
   }
   const checkDigit = (10 - (sum % 10)) % 10
 

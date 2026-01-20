@@ -114,7 +114,7 @@ export function formatXML(input: string): string {
     }
 
     return formatted.trim()
-  } catch (error) {
+  } catch {
     return 'Error formatting XML'
   }
 }
@@ -174,7 +174,7 @@ export function formatCSS(input: string): string {
       .replace(/;\n\}/g, ';\n}')   // Clean up closing braces
 
     return formatted.trim()
-  } catch (error) {
+  } catch {
     return 'Error formatting CSS'
   }
 }
@@ -221,7 +221,7 @@ export function formatJavaScript(input: string): string {
     formatted = formatted.replace(/\n\s*\n/g, '\n')
 
     return formatted.trim()
-  } catch (error) {
+  } catch {
     return 'Error formatting JavaScript'
   }
 }
@@ -289,7 +289,7 @@ export function formatHTML(input: string): string {
     }
 
     return formatted.trim()
-  } catch (error) {
+  } catch {
     return 'Error formatting HTML'
   }
 }
@@ -314,7 +314,6 @@ export function formatYAML(input: string): string {
     // Basic YAML formatting
     const lines = input.split('\n')
     const formatted: string[] = []
-    let currentIndent = 0
 
     for (let line of lines) {
       line = line.trimEnd()
@@ -335,7 +334,7 @@ export function formatYAML(input: string): string {
     }
 
     return formatted.join('\n').trim()
-  } catch (error) {
+  } catch {
     return 'Error formatting YAML'
   }
 }
@@ -347,7 +346,7 @@ export function jsonToYAML(input: string): string {
   try {
     const obj = JSON.parse(input)
 
-    function toYAML(obj: any, indent: number = 0): string {
+    function toYAML(obj: unknown, indent: number = 0): string {
       const spacing = '  '.repeat(indent)
       let result = ''
 
@@ -375,7 +374,7 @@ export function jsonToYAML(input: string): string {
     }
 
     return toYAML(obj).trim()
-  } catch (error) {
+  } catch {
     return 'Invalid JSON input'
   }
 }
@@ -388,8 +387,8 @@ export function yamlToJSON(input: string): string {
     // Very basic YAML to JSON converter
     // In production, use a proper YAML parser
     const lines = input.split('\n')
-    const result: any = {}
-    const stack: any[] = [result]
+    const result: Record<string, unknown> = {}
+    const stack: unknown[] = [result]
     let lastIndent = -1
 
     for (const line of lines) {
@@ -404,11 +403,18 @@ export function yamlToJSON(input: string): string {
         const current = stack[stack.length - 1]
         if (!Array.isArray(current)) {
           const parent = stack[stack.length - 2]
-          const key = Object.keys(parent).pop()!
-          parent[key] = []
-          stack[stack.length - 1] = parent[key]
+          if (!parent || typeof parent !== 'object') {
+            return 'Error converting YAML to JSON'
+          }
+          const parentObj = parent as Record<string, unknown>
+          const key = Object.keys(parentObj).pop()
+          if (!key) {
+            return 'Error converting YAML to JSON'
+          }
+          parentObj[key] = []
+          stack[stack.length - 1] = parentObj[key]
         }
-        stack[stack.length - 1].push(value)
+        ;(stack[stack.length - 1] as unknown[]).push(value)
       } else if (content.includes(':')) {
         // Key-value pair
         const [key, ...valueParts] = content.split(':')
@@ -417,11 +423,15 @@ export function yamlToJSON(input: string): string {
         if (indent > lastIndent) {
           // Nested object
           const parent = stack[stack.length - 1]
+          if (!parent || typeof parent !== 'object') {
+            return 'Error converting YAML to JSON'
+          }
+          const parentObj = parent as Record<string, unknown>
           if (!value) {
-            parent[key] = {}
-            stack.push(parent[key])
+            parentObj[key] = {}
+            stack.push(parentObj[key])
           } else {
-            parent[key] = value
+            parentObj[key] = value
           }
         } else if (indent < lastIndent) {
           // Go back up
@@ -430,20 +440,28 @@ export function yamlToJSON(input: string): string {
             stack.pop()
           }
           const parent = stack[stack.length - 1]
+          if (!parent || typeof parent !== 'object') {
+            return 'Error converting YAML to JSON'
+          }
+          const parentObj = parent as Record<string, unknown>
           if (!value) {
-            parent[key] = {}
-            stack.push(parent[key])
+            parentObj[key] = {}
+            stack.push(parentObj[key])
           } else {
-            parent[key] = value
+            parentObj[key] = value
           }
         } else {
           // Same level
           const parent = stack[stack.length - 1]
+          if (!parent || typeof parent !== 'object') {
+            return 'Error converting YAML to JSON'
+          }
+          const parentObj = parent as Record<string, unknown>
           if (!value) {
-            parent[key] = {}
-            stack.push(parent[key])
+            parentObj[key] = {}
+            stack.push(parentObj[key])
           } else {
-            parent[key] = value
+            parentObj[key] = value
           }
         }
       }
@@ -452,7 +470,7 @@ export function yamlToJSON(input: string): string {
     }
 
     return JSON.stringify(result, null, 2)
-  } catch (error) {
+  } catch {
     return 'Error converting YAML to JSON'
   }
 }

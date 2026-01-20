@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local AI assistant configuration
+.claude/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
