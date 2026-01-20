@@ -45,6 +45,7 @@ export const ErrorCodes = {
   // Generator errors
   INVALID_OPTIONS: 'INVALID_OPTIONS',
   GENERATION_FAILED: 'GENERATION_FAILED',
+  RATE_LIMITED: 'RATE_LIMITED',
 
   // Cipher errors
   INVALID_KEY: 'INVALID_KEY',
