@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Transform</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <header class="popup__header">
+      <h1 class="popup__title">Text Transform</h1>
+      <span class="popup__badge">111+ tools</span>
+    </header>
+
+    <div class="popup__input-section">
+      <textarea
+        id="input"
+        class="popup__textarea"
+        placeholder="Enter text to transform..."
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="popup__categories" id="categories">
+      <!-- Categories will be populated by JS -->
+    </div>
+
+    <div class="popup__tools" id="tools">
+      <!-- Tools will be populated by JS -->
+    </div>
+
+    <div class="popup__output-section" id="output-section" style="display: none;">
+      <div class="popup__output-header">
+        <span id="output-tool-name">Result</span>
+        <button id="copy-btn" class="popup__copy-btn" title="Copy to clipboard">
+          Copy
+        </button>
+      </div>
+      <div id="output" class="popup__output"></div>
+    </div>
+
+    <footer class="popup__footer">
+      <a href="https://texttransform.dev" target="_blank" class="popup__link">
+        texttransform.dev
+      </a>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
