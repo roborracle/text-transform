@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "Developer-focused text and data transformation toolkit",
   "private": true,
+  "bin": {
+    "txtx": "./cli/bin/txtx.js"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:cli": "tsc -p cli/tsconfig.json",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -14,7 +18,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --maxWorkers=2"
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "cli": "npm run build:cli && node cli/bin/txtx.js"
   },
   "keywords": [
     "text-transform",

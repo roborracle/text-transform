@@ -43,3 +43,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# CLI build output
+cli/dist/
+
+# Compiled JS in lib (from CLI build)
+lib/**/*.js
+lib/**/*.js.map
+lib/**/*.d.ts
+lib/**/*.d.ts.map

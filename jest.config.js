@@ -1,12 +1,12 @@
 /** @type {import('jest').Config} */
 const config = {
   projects: [
-    // Node environment for lib tests
+    // Node environment for lib and CLI tests
     {
       displayName: 'lib',
       preset: 'ts-jest',
       testEnvironment: 'node',
-      roots: ['<rootDir>/__tests__/lib'],
+      roots: ['<rootDir>/__tests__/lib', '<rootDir>/__tests__/cli'],
       testMatch: ['**/*.test.ts'],
       transform: {
         '^.+\\.tsx?$': [
