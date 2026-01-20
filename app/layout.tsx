@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { ThemeProvider, themeScript } from '@/contexts';
+import { ThemeProvider, ToastProvider, themeScript } from '@/contexts';
 import { Header, Footer } from '@/components/layout';
 import { SearchProvider } from '@/components/search';
 import { SkipLink } from '@/components/ui';
@@ -93,16 +93,18 @@ export default function RootLayout({
       >
         <Analytics />
         <ThemeProvider>
-          <SearchProvider>
-            <SkipLink />
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main id="main-content" className="flex-1" tabIndex={-1}>
-                {children}
-              </main>
-              <Footer />
-            </div>
-          </SearchProvider>
+          <ToastProvider>
+            <SearchProvider>
+              <SkipLink />
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main id="main-content" className="flex-1" tabIndex={-1}>
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </SearchProvider>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

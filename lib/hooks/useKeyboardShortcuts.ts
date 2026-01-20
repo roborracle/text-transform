@@ -9,29 +9,41 @@ interface ShortcutConfig {
   modifiers?: ModifierKey[];
   callback: () => void;
   preventDefault?: boolean;
+  /** Allow this shortcut to trigger even when focused on input/textarea */
+  allowInInputs?: boolean;
 }
 
 /**
  * Hook for handling keyboard shortcuts
+ *
+ * @example
+ * useKeyboardShortcuts([
+ *   { key: 'k', modifiers: ['meta'], callback: openSearch },
+ *   { key: 'c', modifiers: ['meta', 'shift'], callback: copyOutput, allowInInputs: true },
+ * ]);
  */
 export function useKeyboardShortcuts(shortcuts: ShortcutConfig[]) {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      // Don't trigger shortcuts when typing in inputs
       const target = event.target as HTMLElement;
-      if (
+      const isInInput =
         target.tagName === 'INPUT' ||
         target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      ) {
-        // Only allow escape in inputs
-        if (event.key !== 'Escape') {
-          return;
-        }
-      }
+        target.isContentEditable;
 
       for (const shortcut of shortcuts) {
-        const { key, modifiers = [], callback, preventDefault = true } = shortcut;
+        const {
+          key,
+          modifiers = [],
+          callback,
+          preventDefault = true,
+          allowInInputs = false,
+        } = shortcut;
+
+        // Skip if in input and shortcut doesn't allow it (except Escape)
+        if (isInInput && !allowInInputs && event.key !== 'Escape') {
+          continue;
+        }
 
         // Check if the key matches
         if (event.key.toLowerCase() !== key.toLowerCase()) {
@@ -78,9 +90,11 @@ export function useKeyboardShortcut(
   key: string,
   callback: () => void,
   modifiers: ModifierKey[] = [],
-  preventDefault = true
+  preventDefault = true,
+  allowInInputs = false
 ) {
-  useKeyboardShortcuts([{ key, modifiers, callback, preventDefault }]);
+  useKeyboardShortcuts([{ key, modifiers, callback, preventDefault, allowInInputs }]);
 }
 
+export type { ShortcutConfig, ModifierKey };
 export default useKeyboardShortcuts;

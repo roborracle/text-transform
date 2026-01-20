@@ -62,16 +62,17 @@ export function ToolPageClient({ tool }: ToolPageClientProps) {
       title={tool.name}
       description={tool.description}
       transformFn={transformFn}
-      inputPlaceholder={
+      inputPlaceholder={tool.inputPlaceholder || 'Enter text to transform...'}
+      outputPlaceholder={
         isGenerator
-          ? 'Click Transform to generate output...'
-          : tool.inputPlaceholder || 'Enter text to transform...'
+          ? tool.outputPlaceholder || 'Generated output will appear here...'
+          : tool.outputPlaceholder || 'Transformed output will appear here...'
       }
-      outputPlaceholder={tool.outputPlaceholder || 'Transformed output will appear here...'}
       options={options}
       showSwapButton={!isGenerator && !!tool.reverseFn}
       realtime={!tool.isAsync && !isGenerator}
       maxInputSize={100000}
+      isGenerator={isGenerator}
     />
   );
 }

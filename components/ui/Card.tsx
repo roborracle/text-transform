@@ -82,7 +82,12 @@ export const Card = forwardRef<HTMLElement, CardProps>(
     const paddingClasses = getPaddingClasses(padding);
 
     const interactiveClasses = interactive
-      ? 'transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer'
+      ? [
+          'cursor-pointer',
+          'transition-all duration-200 ease-out',
+          'hover:shadow-lg hover:-translate-y-1',
+          'active:scale-[0.98] active:shadow-md',
+        ].join(' ')
       : '';
 
     const combinedClasses = [

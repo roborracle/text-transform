@@ -92,7 +92,7 @@ describe('Card', () => {
       render(<Card interactive data-testid="card">Content</Card>);
       const card = screen.getByTestId('card');
       expect(card.className).toContain('cursor-pointer');
-      expect(card.className).toContain('hover:shadow-md');
+      expect(card.className).toContain('hover:shadow-lg');
     });
   });
 

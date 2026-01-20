@@ -40,7 +40,7 @@ export function CategoryCard({
       >
         <div className="flex flex-col items-center text-center">
           {/* Icon */}
-          <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors mb-4">
+          <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:scale-110 transition-all duration-200 ease-out mb-4">
             {icon}
           </div>
 

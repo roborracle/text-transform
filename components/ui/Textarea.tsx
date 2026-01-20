@@ -82,8 +82,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const baseClasses = [
       'w-full px-3 py-2',
       'border rounded-lg',
-      'transition-colors duration-200',
-      'focus:outline-none focus:ring-2 focus:ring-offset-1',
+      'transition-all duration-200 ease-out',
+      'ring-0 ring-offset-1 ring-transparent',
+      'focus:outline-none focus:ring-2',
       'disabled:bg-gray-100 disabled:cursor-not-allowed',
       'dark:bg-gray-900 dark:disabled:bg-gray-800',
       'resize-y min-h-[120px]',
