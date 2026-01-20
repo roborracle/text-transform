@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { getAllCategories, getToolCount } from '@/lib/tools';
+import { Logo } from '@/components/ui';
 
 /**
  * Site footer with links and attribution
@@ -19,9 +20,9 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link
               href="/"
-              className="flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white"
+              className="flex items-center gap-2.5 font-bold text-xl text-gray-900 dark:text-white hover:opacity-80 transition-opacity"
             >
-              <span className="text-2xl">{'{T}'}</span>
+              <Logo size={36} />
               <span>Text Transform</span>
             </Link>
             <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">

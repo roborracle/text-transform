@@ -10,3 +10,4 @@ export { ThemeToggle, type ThemeToggleProps } from './ThemeToggle';
 export { SkipLink } from './SkipLink';
 export { Skeleton, ToolCardSkeleton, CategoryCardSkeleton, TransformPanelSkeleton } from './Skeleton';
 export { Toast, type ToastProps, type ToastVariant } from './Toast';
+export { Logo, LogoMark, type LogoProps } from './Logo';

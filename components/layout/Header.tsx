@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ThemeToggle } from '@/components/ui';
+import { ThemeToggle, Logo } from '@/components/ui';
 import { getAllCategoriesWithCounts } from '@/lib/tools';
 
 /**
@@ -99,10 +99,10 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="flex items-center gap-2.5 font-bold text-xl text-gray-900 dark:text-white hover:opacity-80 transition-opacity"
             onClick={closeMobileMenu}
           >
-            <span className="text-2xl">{'{T}'}</span>
+            <Logo size={36} />
             <span className="hidden sm:inline">Text Transform</span>
           </Link>
 

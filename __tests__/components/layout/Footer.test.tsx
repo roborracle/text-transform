@@ -16,6 +16,11 @@ jest.mock('@/lib/tools', () => ({
   getToolCount: () => 111,
 }));
 
+// Mock UI components
+jest.mock('@/components/ui', () => ({
+  Logo: ({ size }: { size?: number }) => <div data-testid="logo" style={{ width: size, height: size }}>Logo</div>,
+}));
+
 describe('Footer', () => {
   describe('rendering', () => {
     it('renders the footer element', () => {
@@ -25,7 +30,7 @@ describe('Footer', () => {
 
     it('renders the site logo', () => {
       render(<Footer />);
-      expect(screen.getByText('{T}')).toBeInTheDocument();
+      expect(screen.getByTestId('logo')).toBeInTheDocument();
       expect(screen.getByText('Text Transform')).toBeInTheDocument();
     });
 
@@ -38,7 +43,7 @@ describe('Footer', () => {
   describe('brand section', () => {
     it('logo links to homepage', () => {
       render(<Footer />);
-      const logoLink = screen.getByRole('link', { name: /{T}|Text Transform/i });
+      const logoLink = screen.getByRole('link', { name: /Logo|Text Transform/i });
       expect(logoLink).toHaveAttribute('href', '/');
     });
 

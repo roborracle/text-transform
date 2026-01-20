@@ -11,9 +11,10 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(() => '/'),
 }));
 
-// Mock ThemeToggle
+// Mock UI components
 jest.mock('@/components/ui', () => ({
   ThemeToggle: () => <button data-testid="theme-toggle">Toggle Theme</button>,
+  Logo: ({ size }: { size?: number }) => <div data-testid="logo" style={{ width: size, height: size }}>Logo</div>,
 }));
 
 // Mock tools library
@@ -37,7 +38,7 @@ describe('Header', () => {
 
     it('renders the logo with site name', () => {
       render(<Header />);
-      expect(screen.getByText('{T}')).toBeInTheDocument();
+      expect(screen.getByTestId('logo')).toBeInTheDocument();
       expect(screen.getByText('Text Transform')).toBeInTheDocument();
     });
 
@@ -61,7 +62,7 @@ describe('Header', () => {
   describe('logo link', () => {
     it('logo links to homepage', () => {
       render(<Header />);
-      const logoLink = screen.getByRole('link', { name: /{T}|Text Transform/i });
+      const logoLink = screen.getByRole('link', { name: /Logo|Text Transform/i });
       expect(logoLink).toHaveAttribute('href', '/');
     });
   });
