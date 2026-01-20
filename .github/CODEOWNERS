@@ -1,0 +1,16 @@
+# Default owners for everything in the repo
+* @owner
+
+# Core transformation functions
+/lib/transformations/ @owner
+
+# UI Components
+/components/ @owner
+
+# Tests
+/__tests__/ @owner
+
+# Configuration
+/next.config.ts @owner
+/jest.config.js @owner
+/tsconfig.json @owner

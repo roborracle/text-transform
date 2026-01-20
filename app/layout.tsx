@@ -4,6 +4,7 @@ import { ThemeProvider, themeScript } from '@/contexts';
 import { Header, Footer } from '@/components/layout';
 import { SearchProvider } from '@/components/search';
 import { SkipLink } from '@/components/ui';
+import { Analytics } from '@/components/Analytics';
 import './globals.css';
 
 const geistSans = Geist({
@@ -80,6 +81,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100`}
       >
+        <Analytics />
         <ThemeProvider>
           <SearchProvider>
             <SkipLink />
