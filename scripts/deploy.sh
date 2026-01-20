@@ -49,27 +49,43 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 echo -e "${GREEN}✓ Git status checked${NC}"
 
-# Step 2: Run tests (unless skipped)
+# Step 2: Security audit
+echo -e "\n${YELLOW}Step 2: Security audit${NC}"
+AUDIT_RESULT=$(npm audit --production 2>&1)
+if echo "$AUDIT_RESULT" | grep -q "found 0 vulnerabilities"; then
+  echo -e "${GREEN}✓ No vulnerabilities found${NC}"
+else
+  echo -e "${RED}Security vulnerabilities detected:${NC}"
+  echo "$AUDIT_RESULT"
+  read -p "Continue with vulnerabilities? (y/n) " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Run 'npm audit fix' to resolve vulnerabilities"
+    exit 1
+  fi
+fi
+
+# Step 3: Run tests (unless skipped)
 if [ "$SKIP_TESTS" = false ]; then
-  echo -e "\n${YELLOW}Step 2: Running tests${NC}"
+  echo -e "\n${YELLOW}Step 3: Running tests${NC}"
   npm test
   echo -e "${GREEN}✓ Tests passed${NC}"
 else
-  echo -e "\n${YELLOW}Step 2: Tests skipped${NC}"
+  echo -e "\n${YELLOW}Step 3: Tests skipped${NC}"
 fi
 
-# Step 3: Build verification
-echo -e "\n${YELLOW}Step 3: Building for production${NC}"
+# Step 4: Build verification
+echo -e "\n${YELLOW}Step 4: Building for production${NC}"
 npm run build
 echo -e "${GREEN}✓ Build successful${NC}"
 
-# Step 4: Lint check
-echo -e "\n${YELLOW}Step 4: Running lint${NC}"
+# Step 5: Lint check
+echo -e "\n${YELLOW}Step 5: Running lint${NC}"
 npm run lint || true
 echo -e "${GREEN}✓ Lint check completed${NC}"
 
-# Step 5: Deploy to Railway
-echo -e "\n${YELLOW}Step 5: Deploying to Railway${NC}"
+# Step 6: Deploy to Railway
+echo -e "\n${YELLOW}Step 6: Deploying to Railway${NC}"
 railway up
 
 echo -e "\n${GREEN}=========================================="
