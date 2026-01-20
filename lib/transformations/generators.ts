@@ -1,7 +1,28 @@
 /**
  * Random data generators for developers
  * Passwords, IPs, strings, and more
+ *
+ * SECURITY: All random generation uses crypto.getRandomValues()
+ * for cryptographically secure randomness
  */
+
+/**
+ * Cryptographically secure random integer
+ */
+function secureRandomInt(max: number): number {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return array[0] % max;
+}
+
+/**
+ * Cryptographically secure random float (0-1)
+ */
+function secureRandomFloat(): number {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return array[0] / (0xffffffff + 1);
+}
 
 /**
  * Generate secure random password
@@ -32,7 +53,7 @@ export function generatePassword(
 
   let password = ''
   for (let i = 0; i < length; i++) {
-    password += chars[Math.floor(Math.random() * chars.length)]
+    password += chars[secureRandomInt( chars.length)]
   }
 
   return password
@@ -42,7 +63,7 @@ export function generatePassword(
  * Generate random IPv4 address
  */
 export function generateIPv4(): string {
-  return Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join('.')
+  return Array.from({ length: 4 }, () => secureRandomInt( 256)).join('.')
 }
 
 /**
@@ -50,7 +71,7 @@ export function generateIPv4(): string {
  */
 export function generateIPv6(): string {
   return Array.from({ length: 8 }, () =>
-    Math.floor(Math.random() * 65536).toString(16).padStart(4, '0')
+    secureRandomInt( 65536).toString(16).padStart(4, '0')
   ).join(':')
 }
 
@@ -59,7 +80,7 @@ export function generateIPv6(): string {
  */
 export function generateMacAddress(separator: string = ':'): string {
   return Array.from({ length: 6 }, () =>
-    Math.floor(Math.random() * 256).toString(16).padStart(2, '0')
+    secureRandomInt( 256).toString(16).padStart(2, '0')
   ).join(separator)
 }
 
@@ -80,7 +101,7 @@ export function generateRandomString(
   const chars = charsets[charset] || charsets.alphanumeric
   let result = ''
   for (let i = 0; i < length; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)]
+    result += chars[secureRandomInt( chars.length)]
   }
   return result
 }
@@ -111,7 +132,7 @@ export function generateLoremIpsum(
   for (let p = 0; p < paragraphs; p++) {
     const paragraph: string[] = []
     for (let w = 0; w < wordsPerParagraph; w++) {
-      paragraph.push(words[Math.floor(Math.random() * words.length)])
+      paragraph.push(words[secureRandomInt( words.length)])
     }
     // Capitalize first word and add period
     paragraph[0] = paragraph[0].charAt(0).toUpperCase() + paragraph[0].slice(1)
@@ -146,9 +167,9 @@ export function generateRandomEmail(domain: string = 'example.com'): string {
 export function generateRandomUsername(): string {
   const adjectives = ['happy', 'cool', 'fast', 'clever', 'bright', 'swift', 'bold', 'calm']
   const nouns = ['tiger', 'eagle', 'wolf', 'bear', 'fox', 'hawk', 'lion', 'deer']
-  const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
-  const noun = nouns[Math.floor(Math.random() * nouns.length)]
-  const num = Math.floor(Math.random() * 1000)
+  const adj = adjectives[secureRandomInt( adjectives.length)]
+  const noun = nouns[secureRandomInt( nouns.length)]
+  const num = secureRandomInt( 1000)
   return `${adj}_${noun}${num}`
 }
 
@@ -157,14 +178,14 @@ export function generateRandomUsername(): string {
  */
 export function generateRandomPhone(format: 'us' | 'international' = 'us'): string {
   if (format === 'us') {
-    const area = Math.floor(Math.random() * 900) + 100
-    const exchange = Math.floor(Math.random() * 900) + 100
-    const subscriber = Math.floor(Math.random() * 9000) + 1000
+    const area = secureRandomInt( 900) + 100
+    const exchange = secureRandomInt( 900) + 100
+    const subscriber = secureRandomInt( 9000) + 1000
     return `(${area}) ${exchange}-${subscriber}`
   }
 
-  const country = Math.floor(Math.random() * 99) + 1
-  const number = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10)).join('')
+  const country = secureRandomInt( 99) + 1
+  const number = Array.from({ length: 10 }, () => secureRandomInt( 10)).join('')
   return `+${country} ${number}`
 }
 
@@ -174,7 +195,7 @@ export function generateRandomPhone(format: 'us' | 'international' = 'us'): stri
 export function generateTestCreditCard(type: 'visa' | 'mastercard' | 'amex' = 'visa'): string {
   const prefixes: Record<string, string> = {
     visa: '4',
-    mastercard: '5' + Math.floor(Math.random() * 5 + 1),
+    mastercard: '5' + secureRandomInt( 5 + 1),
     amex: '3' + (Math.random() > 0.5 ? '4' : '7'),
   }
 
@@ -183,7 +204,7 @@ export function generateTestCreditCard(type: 'visa' | 'mastercard' | 'amex' = 'v
 
   // Generate random digits
   while (number.length < length - 1) {
-    number += Math.floor(Math.random() * 10)
+    number += secureRandomInt( 10)
   }
 
   // Calculate Luhn check digit
@@ -216,7 +237,7 @@ export function generateSlug(words: number = 3): string {
 
   const selected: string[] = []
   for (let i = 0; i < words; i++) {
-    selected.push(wordList[Math.floor(Math.random() * wordList.length)])
+    selected.push(wordList[secureRandomInt( wordList.length)])
   }
 
   return selected.join('-')

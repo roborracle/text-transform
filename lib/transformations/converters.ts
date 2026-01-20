@@ -1,6 +1,30 @@
 /**
  * Data format conversion utilities for developers
+ *
+ * SECURITY: Code generation functions properly escape user input
+ * to prevent code injection in generated output
  */
+
+/**
+ * Escape single quotes for JavaScript/Python string literals
+ */
+function escapeForJSString(str: string): string {
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+}
+
+/**
+ * Escape for PHP single-quoted strings
+ */
+function escapeForPHPString(str: string): string {
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'");
+}
 
 /**
  * CSV to JSON converter
@@ -411,19 +435,19 @@ export function curlToCode(curl: string, language: string = 'javascript'): strin
 }
 
 function generateJavaScriptFetch(url: string, method: string, headers: Record<string, string>, data: string | null): string {
-  let code = `fetch('${url}', {\n`
-  code += `  method: '${method}',\n`
+  let code = `fetch('${escapeForJSString(url)}', {\n`
+  code += `  method: '${escapeForJSString(method)}',\n`
 
   if (Object.keys(headers).length > 0) {
     code += '  headers: {\n'
     Object.entries(headers).forEach(([key, value]) => {
-      code += `    '${key}': '${value}',\n`
+      code += `    '${escapeForJSString(key)}': '${escapeForJSString(value)}',\n`
     })
     code += '  },\n'
   }
 
   if (data) {
-    code += `  body: '${data}',\n`
+    code += `  body: '${escapeForJSString(data)}',\n`
   }
 
   code += '})\n'
@@ -440,17 +464,17 @@ function generatePythonRequests(url: string, method: string, headers: Record<str
   if (Object.keys(headers).length > 0) {
     code += 'headers = {\n'
     Object.entries(headers).forEach(([key, value]) => {
-      code += `    '${key}': '${value}',\n`
+      code += `    '${escapeForJSString(key)}': '${escapeForJSString(value)}',\n`
     })
     code += '}\n\n'
   }
 
   if (data) {
-    code += `data = '${data}'\n\n`
+    code += `data = '${escapeForJSString(data)}'\n\n`
   }
 
-  code += `response = requests.${method.toLowerCase()}(\n`
-  code += `    '${url}'`
+  code += `response = requests.${escapeForJSString(method.toLowerCase())}(\n`
+  code += `    '${escapeForJSString(url)}'`
 
   if (Object.keys(headers).length > 0) {
     code += ',\n    headers=headers'
@@ -470,18 +494,18 @@ function generatePHPCurl(url: string, method: string, headers: Record<string, st
   let code = '<?php\n\n'
   code += '$curl = curl_init();\n\n'
   code += 'curl_setopt_array($curl, array(\n'
-  code += `  CURLOPT_URL => '${url}',\n`
+  code += `  CURLOPT_URL => '${escapeForPHPString(url)}',\n`
   code += '  CURLOPT_RETURNTRANSFER => true,\n'
-  code += `  CURLOPT_CUSTOMREQUEST => '${method}',\n`
+  code += `  CURLOPT_CUSTOMREQUEST => '${escapeForPHPString(method)}',\n`
 
   if (data) {
-    code += `  CURLOPT_POSTFIELDS => '${data}',\n`
+    code += `  CURLOPT_POSTFIELDS => '${escapeForPHPString(data)}',\n`
   }
 
   if (Object.keys(headers).length > 0) {
     code += '  CURLOPT_HTTPHEADER => array(\n'
     Object.entries(headers).forEach(([key, value]) => {
-      code += `    '${key}: ${value}',\n`
+      code += `    '${escapeForPHPString(key)}: ${escapeForPHPString(value)}',\n`
     })
     code += '  ),\n'
   }

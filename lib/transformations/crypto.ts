@@ -3,6 +3,28 @@
  */
 
 /**
+ * Cryptographically secure random number generator
+ * Uses crypto.getRandomValues() instead of Math.random()
+ */
+function secureRandomInt(max: number): number {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return array[0] % max;
+}
+
+/**
+ * Generate cryptographically secure random bytes as hex string
+ */
+function secureRandomHex(length: number): string {
+  const bytes = new Uint8Array(Math.ceil(length / 2));
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, length);
+}
+
+/**
  * Pure JavaScript MD5 implementation
  * Web Crypto API does NOT support MD5, so we need a manual implementation
  */
@@ -232,9 +254,9 @@ export function generateUUIDv4(): string {
     return crypto.randomUUID()
   }
 
-  // Fallback implementation
+  // Fallback implementation using cryptographically secure random
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0
+    const r = secureRandomInt(16)
     const v = c === 'x' ? r : (r & 0x3 | 0x8)
     return v.toString(16)
   })
@@ -260,7 +282,7 @@ export function generateULID(): string {
 
   let randomStr = ''
   for (let i = 0; i < RANDOM_LEN; i++) {
-    randomStr += ENCODING[Math.floor(Math.random() * ENCODING.length)]
+    randomStr += ENCODING[secureRandomInt(ENCODING.length)]
   }
 
   return timeStr + randomStr
@@ -274,7 +296,7 @@ export function generateNanoID(size: number = 21): string {
   let id = ''
 
   for (let i = 0; i < size; i++) {
-    id += alphabet[Math.floor(Math.random() * alphabet.length)]
+    id += alphabet[secureRandomInt(alphabet.length)]
   }
 
   return id
@@ -355,13 +377,13 @@ export function generateBcryptHash(input: string): string {
 }
 
 /**
- * Generate random string for various uses
+ * Generate random string for various uses (cryptographically secure)
  */
 function generateRandomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789./='
   let result = ''
   for (let i = 0; i < length; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)]
+    result += chars[secureRandomInt(chars.length)]
   }
   return result
 }

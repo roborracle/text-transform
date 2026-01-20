@@ -5,6 +5,7 @@ import { Header, Footer } from '@/components/layout';
 import { SearchProvider } from '@/components/search';
 import { SkipLink } from '@/components/ui';
 import { Analytics } from '@/components/Analytics';
+import { generateGlobalGraphSchema, schemaToJsonLd } from '@/lib/schema';
 import './globals.css';
 
 const geistSans = Geist({
@@ -34,8 +35,11 @@ export const metadata: Metadata = {
     'decoding',
     'online tools',
   ],
-  authors: [{ name: 'Text Transform' }],
-  creator: 'Text Transform',
+  authors: [
+    { name: 'Robert David Orr', url: 'https://robertdavidorr.com' },
+  ],
+  creator: 'Robert David Orr',
+  publisher: 'Text Transform',
   metadataBase: new URL('https://texttransform.dev'),
   openGraph: {
     type: 'website',
@@ -71,11 +75,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const globalSchema = generateGlobalGraphSchema();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: schemaToJsonLd(globalSchema) }}
         />
       </head>
       <body
