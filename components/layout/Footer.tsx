@@ -86,9 +86,23 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            &copy; {currentYear} Text Transform. All rights reserved.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              &copy; {currentYear} Text Transform. All rights reserved.
+            </p>
+            <span className="hidden sm:inline text-gray-300 dark:text-gray-600">|</span>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Created by{' '}
+              <a
+                href="https://robertdavidorr.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Robert David Orr
+              </a>
+            </p>
+          </div>
           <div className="flex items-center gap-4">
             <span className="text-xs text-gray-400 dark:text-gray-500">
               100% client-side processing
