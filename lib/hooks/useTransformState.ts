@@ -264,7 +264,7 @@ export function useTransformState<TOptions = Record<string, unknown>>(
 export function useSimpleTransform(
   transformFn: (input: string) => string | Promise<string>,
   config?: Omit<UseTransformStateOptions, 'transformFn'>
-): TransformState<Record<string, never>> {
+): TransformState {
   return useTransformState({
     transformFn,
     ...config,
