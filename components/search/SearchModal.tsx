@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { search } from '@/lib/search';
 import type { SearchResult } from '@/lib/search';
+import { useFocusTrap } from '@/lib/hooks';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -19,6 +20,9 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  // Focus trap for accessibility - traps focus within modal and returns on close
+  const modalRef = useFocusTrap<HTMLDivElement>(isOpen, { autoFocus: false });
 
   // Search when query changes
   useEffect(() => {
@@ -99,7 +103,10 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
       aria-modal="true"
       aria-label="Search tools"
     >
-      <div className="w-full max-w-xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div
+        ref={modalRef}
+        className="w-full max-w-xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+      >
         {/* Search Input */}
         <div className="flex items-center px-4 border-b border-gray-200 dark:border-gray-700">
           <svg

@@ -7,3 +7,4 @@ export { useKeyboardShortcuts, useKeyboardShortcut } from './useKeyboardShortcut
 export { useClipboard } from './useClipboard';
 export { useRecentTools } from './useRecentTools';
 export type { RecentTool } from './useRecentTools';
+export { useFocusTrap } from './useFocusTrap';

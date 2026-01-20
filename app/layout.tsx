@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider, themeScript } from '@/contexts';
 import { Header, Footer } from '@/components/layout';
 import { SearchProvider } from '@/components/search';
+import { SkipLink } from '@/components/ui';
 import './globals.css';
 
 const geistSans = Geist({
@@ -81,9 +82,10 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <SearchProvider>
+            <SkipLink />
             <div className="flex flex-col min-h-screen">
               <Header />
-              <main className="flex-1">
+              <main id="main-content" className="flex-1" tabIndex={-1}>
                 {children}
               </main>
               <Footer />

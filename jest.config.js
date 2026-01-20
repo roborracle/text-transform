@@ -33,7 +33,7 @@ const config = {
       displayName: 'components',
       preset: 'ts-jest',
       testEnvironment: 'jsdom',
-      roots: ['<rootDir>/__tests__/components'],
+      roots: ['<rootDir>/__tests__/components', '<rootDir>/__tests__/a11y'],
       testMatch: ['**/*.test.tsx'],
       transform: {
         '^.+\\.tsx?$': [
