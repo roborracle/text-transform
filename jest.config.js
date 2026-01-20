@@ -6,7 +6,7 @@ const config = {
       displayName: 'lib',
       preset: 'ts-jest',
       testEnvironment: 'node',
-      roots: ['<rootDir>/__tests__/lib', '<rootDir>/__tests__/cli'],
+      roots: ['<rootDir>/__tests__/lib', '<rootDir>/__tests__/cli', '<rootDir>/__tests__/api'],
       testMatch: ['**/*.test.ts'],
       transform: {
         '^.+\\.tsx?$': [
