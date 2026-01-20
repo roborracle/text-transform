@@ -17,8 +17,19 @@ const eslintConfig = [
       ".next/**",
       "out/**",
       "build/**",
+      "cli/dist/**",
+      "coverage/**",
+      "extension/**",
       "next-env.d.ts",
     ],
+  },
+  // Allow require() in test files, Jest setup, and CLI entry point
+  {
+    files: ["**/__tests__/**", "jest.setup.ts", "cli/bin/*.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+      "@next/next/no-html-link-for-pages": "off",
+    },
   },
 ];
 
