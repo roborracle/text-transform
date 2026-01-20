@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Sidebar } from '@/components/layout';
+import { ToolPageClient } from '@/components/tools';
 import {
   getAllToolSlugs,
   getTool,
@@ -210,66 +211,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
               </p>
             </div>
 
-            {/* Tool Interface Placeholder */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Input Area */}
-                <div>
-                  <label
-                    htmlFor="input"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    Input
-                  </label>
-                  <textarea
-                    id="input"
-                    className="w-full h-48 px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                    placeholder={tool.inputPlaceholder || 'Enter text to transform...'}
-                  />
-                </div>
-
-                {/* Output Area */}
-                <div>
-                  <label
-                    htmlFor="output"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    Output
-                  </label>
-                  <textarea
-                    id="output"
-                    readOnly
-                    className="w-full h-48 px-4 py-3 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 resize-none"
-                    placeholder={tool.outputPlaceholder || 'Transformed output will appear here...'}
-                  />
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-                  >
-                    Clear
-                  </button>
-                  <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-                  >
-                    Copy Output
-                  </button>
-                </div>
-                {tool.reverseFn && (
-                  <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
-                  >
-                    Reverse
-                  </button>
-                )}
-              </div>
+            {/* Tool Interface */}
+            <div className="mb-8">
+              <ToolPageClient tool={tool} />
             </div>
 
             {/* Related Tools */}

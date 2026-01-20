@@ -46,3 +46,11 @@ export {
 // Tool definitions (for direct access if needed)
 export { BATCH1_TOOLS } from './definitions/batch1';
 export { BATCH2_TOOLS } from './definitions/batch2';
+
+// Function registry
+export {
+  FUNCTION_REGISTRY,
+  getTransformFunction,
+  hasTransformFunction,
+  type TransformFunction,
+} from './function-registry';
