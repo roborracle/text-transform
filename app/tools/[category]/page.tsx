@@ -7,6 +7,9 @@ import {
   getCategoryBySlug,
   getToolsByCategorySlug,
 } from '@/lib/tools';
+import type { Tool } from '@/lib/tools';
+
+const BASE_URL = 'https://texttransform.dev';
 
 interface CategoryPageProps {
   params: Promise<{
@@ -47,6 +50,61 @@ export async function generateMetadata({
       description: category.description,
     },
   };
+}
+
+/**
+ * JSON-LD structured data for category page
+ */
+function CategoryJsonLd({
+  category,
+  tools,
+  categorySlug,
+}: {
+  category: { name: string; description: string };
+  tools: Tool[];
+  categorySlug: string;
+}) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${category.name} Tools`,
+    description: category.description,
+    url: `${BASE_URL}/tools/${categorySlug}`,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Text Transform',
+      url: BASE_URL,
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      name: `${category.name} Tools`,
+      numberOfItems: tools.length,
+      itemListElement: tools.map((tool, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'SoftwareApplication',
+          name: tool.name,
+          description: tool.description,
+          url: `${BASE_URL}/tools/${categorySlug}/${tool.slug}`,
+          applicationCategory: 'DeveloperApplication',
+          operatingSystem: 'Web Browser',
+          offers: {
+            '@type': 'Offer',
+            price: '0',
+            priceCurrency: 'USD',
+          },
+        },
+      })),
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
 }
 
 /**
@@ -92,50 +150,57 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const tools = getToolsByCategorySlug(categorySlug);
 
   return (
-    <div className="flex">
-      <Sidebar activeCategory={categorySlug} />
+    <>
+      <CategoryJsonLd
+        category={category}
+        tools={tools}
+        categorySlug={categorySlug}
+      />
+      <div className="flex">
+        <Sidebar activeCategory={categorySlug} />
 
-      <div className="flex-1 min-w-0">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Category Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-4xl">{category.icon}</span>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {category.name}
-              </h1>
-            </div>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              {category.description}
-            </p>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
-              {tools.length} tools available
-            </p>
-          </div>
-
-          {/* Tools Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {tools.map((tool) => (
-              <ToolListItem
-                key={tool.id}
-                name={tool.name}
-                description={tool.description}
-                categorySlug={categorySlug}
-                toolSlug={tool.slug}
-              />
-            ))}
-          </div>
-
-          {/* No tools message */}
-          {tools.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                No tools available in this category yet.
+        <div className="flex-1 min-w-0">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Category Header */}
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-4xl">{category.icon}</span>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {category.name}
+                </h1>
+              </div>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                {category.description}
+              </p>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
+                {tools.length} tools available
               </p>
             </div>
-          )}
+
+            {/* Tools Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {tools.map((tool) => (
+                <ToolListItem
+                  key={tool.id}
+                  name={tool.name}
+                  description={tool.description}
+                  categorySlug={categorySlug}
+                  toolSlug={tool.slug}
+                />
+              ))}
+            </div>
+
+            {/* No tools message */}
+            {tools.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 dark:text-gray-400">
+                  No tools available in this category yet.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -8,6 +8,9 @@ import {
   getCategoryBySlug,
   getRelatedTools,
 } from '@/lib/tools';
+import type { Tool, Category } from '@/lib/tools';
+
+const BASE_URL = 'https://texttransform.dev';
 
 interface ToolPageProps {
   params: Promise<{
@@ -55,6 +58,80 @@ export async function generateMetadata({
 }
 
 /**
+ * JSON-LD structured data for tool page
+ */
+function ToolJsonLd({
+  tool,
+  category,
+  categorySlug,
+}: {
+  tool: Tool;
+  category: Category;
+  categorySlug: string;
+}) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: tool.name,
+    description: tool.description,
+    url: `${BASE_URL}/tools/${categorySlug}/${tool.slug}`,
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Web Browser',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    isPartOf: {
+      '@type': 'WebApplication',
+      name: 'Text Transform',
+      url: BASE_URL,
+      applicationCategory: 'DeveloperApplication',
+    },
+    keywords: tool.keywords.join(', '),
+    category: category.name,
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: BASE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: category.name,
+        item: `${BASE_URL}/tools/${categorySlug}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: tool.name,
+        item: `${BASE_URL}/tools/${categorySlug}/${tool.slug}`,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+    </>
+  );
+}
+
+/**
  * Related tool card component
  */
 function RelatedToolCard({
@@ -91,128 +168,131 @@ export default async function ToolPage({ params }: ToolPageProps) {
   const relatedTools = getRelatedTools(tool.id, 5);
 
   return (
-    <div className="flex">
-      <Sidebar activeCategory={categorySlug} activeTool={toolSlug} />
+    <>
+      <ToolJsonLd tool={tool} category={category} categorySlug={categorySlug} />
+      <div className="flex">
+        <Sidebar activeCategory={categorySlug} activeTool={toolSlug} />
 
-      <div className="flex-1 min-w-0">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Breadcrumb */}
-          <nav className="mb-4">
-            <ol className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <li>
-                <Link
-                  href="/"
-                  className="hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>/</li>
-              <li>
-                <Link
-                  href={`/tools/${categorySlug}`}
-                  className="hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  {category.name}
-                </Link>
-              </li>
-              <li>/</li>
-              <li className="text-gray-900 dark:text-white">{tool.name}</li>
-            </ol>
-          </nav>
+        <div className="flex-1 min-w-0">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Breadcrumb */}
+            <nav className="mb-4">
+              <ol className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <li>
+                  <Link
+                    href="/"
+                    className="hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>/</li>
+                <li>
+                  <Link
+                    href={`/tools/${categorySlug}`}
+                    className="hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+                <li>/</li>
+                <li className="text-gray-900 dark:text-white">{tool.name}</li>
+              </ol>
+            </nav>
 
-          {/* Tool Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              {tool.name}
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              {tool.description}
-            </p>
-          </div>
-
-          {/* Tool Interface Placeholder */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Input Area */}
-              <div>
-                <label
-                  htmlFor="input"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Input
-                </label>
-                <textarea
-                  id="input"
-                  className="w-full h-48 px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  placeholder={tool.inputPlaceholder || 'Enter text to transform...'}
-                />
-              </div>
-
-              {/* Output Area */}
-              <div>
-                <label
-                  htmlFor="output"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Output
-                </label>
-                <textarea
-                  id="output"
-                  readOnly
-                  className="w-full h-48 px-4 py-3 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 resize-none"
-                  placeholder={tool.outputPlaceholder || 'Transformed output will appear here...'}
-                />
-              </div>
+            {/* Tool Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                {tool.name}
+              </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                {tool.description}
+              </p>
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-                >
-                  Clear
-                </button>
-                <button
-                  type="button"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-                >
-                  Copy Output
-                </button>
-              </div>
-              {tool.reverseFn && (
-                <button
-                  type="button"
-                  className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
-                >
-                  Reverse
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Related Tools */}
-          {relatedTools.length > 0 && (
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Related Tools
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {relatedTools.map((relatedTool) => (
-                  <RelatedToolCard
-                    key={relatedTool.id}
-                    name={relatedTool.name}
-                    categorySlug={categorySlug}
-                    toolSlug={relatedTool.slug}
+            {/* Tool Interface Placeholder */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Input Area */}
+                <div>
+                  <label
+                    htmlFor="input"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Input
+                  </label>
+                  <textarea
+                    id="input"
+                    className="w-full h-48 px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    placeholder={tool.inputPlaceholder || 'Enter text to transform...'}
                   />
-                ))}
+                </div>
+
+                {/* Output Area */}
+                <div>
+                  <label
+                    htmlFor="output"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Output
+                  </label>
+                  <textarea
+                    id="output"
+                    readOnly
+                    className="w-full h-48 px-4 py-3 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 resize-none"
+                    placeholder={tool.outputPlaceholder || 'Transformed output will appear here...'}
+                  />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                  >
+                    Copy Output
+                  </button>
+                </div>
+                {tool.reverseFn && (
+                  <button
+                    type="button"
+                    className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                  >
+                    Reverse
+                  </button>
+                )}
               </div>
             </div>
-          )}
+
+            {/* Related Tools */}
+            {relatedTools.length > 0 && (
+              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Related Tools
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {relatedTools.map((relatedTool) => (
+                    <RelatedToolCard
+                      key={relatedTool.id}
+                      name={relatedTool.name}
+                      categorySlug={categorySlug}
+                      toolSlug={relatedTool.slug}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
