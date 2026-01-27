@@ -33,6 +33,8 @@ export interface UseTransformStateOptions<TOptions = Record<string, unknown>> {
   initialOptions?: TOptions;
   /** Maximum input size in characters */
   maxInputSize?: number;
+  /** Generator mode - allows empty input */
+  isGenerator?: boolean;
 }
 
 /**
@@ -82,6 +84,7 @@ export function useTransformState<TOptions = Record<string, unknown>>(
     initialInput = '',
     initialOptions = {} as TOptions,
     maxInputSize,
+    isGenerator = false,
   } = config;
 
   const [input, setInputState] = useState(initialInput);
@@ -102,8 +105,8 @@ export function useTransformState<TOptions = Record<string, unknown>>(
     // Clear previous error
     setError(null);
 
-    // Validate input size
-    if (maxInputSize) {
+    // Validate input size (skip for generators)
+    if (maxInputSize && !isGenerator) {
       try {
         validateInputSize(inputValue, maxInputSize);
       } catch (e) {
@@ -114,8 +117,8 @@ export function useTransformState<TOptions = Record<string, unknown>>(
       }
     }
 
-    // Skip empty input
-    if (!inputValue.trim()) {
+    // Skip empty input (but allow generators to run without input)
+    if (!isGenerator && !inputValue.trim()) {
       setOutput('');
       return;
     }
