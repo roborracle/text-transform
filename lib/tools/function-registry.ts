@@ -40,10 +40,10 @@ function wrapPasswordGenerator(): TransformFunction {
   return (_input: string, options?: Record<string, unknown>) => {
     const length = typeof options?.length === 'number' ? options.length : 16;
     return transformations.generatePassword(length, {
-      uppercase: options?.uppercase !== false,
-      lowercase: options?.lowercase !== false,
-      numbers: options?.numbers !== false,
-      symbols: options?.symbols !== false,
+      uppercase: options?.includeUppercase !== false,
+      lowercase: options?.includeLowercase !== false,
+      numbers: options?.includeNumbers !== false,
+      symbols: options?.includeSymbols !== false,
     });
   };
 }
@@ -294,13 +294,28 @@ export const FUNCTION_REGISTRY: Record<string, TransformFunction> = {
   generateSlug: wrapSlugGenerator(),
   generateIPv4: wrapGenerator(transformations.generateIPv4),
   generateIPv6: wrapGenerator(transformations.generateIPv6),
-  generateMacAddress: wrapGenerator(() => transformations.generateMacAddress()),
-  generateApiKey: wrapGenerator(() => transformations.generateApiKey()),
+  generateMacAddress: (_input: string, options?: Record<string, unknown>) => {
+    const separator = typeof options?.separator === 'string' ? options.separator : ':';
+    return transformations.generateMacAddress(separator);
+  },
+  generateApiKey: (_input: string, options?: Record<string, unknown>) => {
+    const prefix = typeof options?.prefix === 'string' ? options.prefix : 'sk';
+    return transformations.generateApiKey(prefix);
+  },
   generateRandomUsername: wrapGenerator(transformations.generateRandomUsername),
-  generateRandomEmail: wrapGenerator(() => transformations.generateRandomEmail()),
-  generateRandomPhone: wrapGenerator(() => transformations.generateRandomPhone()),
+  generateRandomEmail: (_input: string, options?: Record<string, unknown>) => {
+    const domain = typeof options?.domain === 'string' ? options.domain : 'example.com';
+    return transformations.generateRandomEmail(domain);
+  },
+  generateRandomPhone: (_input: string, options?: Record<string, unknown>) => {
+    const format = (options?.format as 'us' | 'international') || 'us';
+    return transformations.generateRandomPhone(format);
+  },
   generateRandomDate: wrapGenerator(() => transformations.generateRandomDate()),
-  generateTestCreditCard: wrapGenerator(() => transformations.generateTestCreditCard()),
+  generateTestCreditCard: (_input: string, options?: Record<string, unknown>) => {
+    const type = (options?.type as 'visa' | 'mastercard' | 'amex') || 'visa';
+    return transformations.generateTestCreditCard(type);
+  },
 
   // Ciphers
   rot13: transformations.rot13,
