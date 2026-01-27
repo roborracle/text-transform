@@ -40,10 +40,10 @@ function wrapPasswordGenerator(): TransformFunction {
   return (_input: string, options?: Record<string, unknown>) => {
     const length = typeof options?.length === 'number' ? options.length : 16;
     return transformations.generatePassword(length, {
-      uppercase: options?.uppercase !== false,
-      lowercase: options?.lowercase !== false,
-      numbers: options?.numbers !== false,
-      symbols: options?.symbols !== false,
+      uppercase: options?.includeUppercase !== false,
+      lowercase: options?.includeLowercase !== false,
+      numbers: options?.includeNumbers !== false,
+      symbols: options?.includeSymbols !== false,
     });
   };
 }
@@ -294,13 +294,73 @@ export const FUNCTION_REGISTRY: Record<string, TransformFunction> = {
   generateSlug: wrapSlugGenerator(),
   generateIPv4: wrapGenerator(transformations.generateIPv4),
   generateIPv6: wrapGenerator(transformations.generateIPv6),
-  generateMacAddress: wrapGenerator(() => transformations.generateMacAddress()),
-  generateApiKey: wrapGenerator(() => transformations.generateApiKey()),
+  generateMacAddress: (_input: string, options?: Record<string, unknown>) => {
+    const separator = typeof options?.separator === 'string' ? options.separator : ':';
+    return transformations.generateMacAddress(separator);
+  },
+  generateApiKey: (_input: string, options?: Record<string, unknown>) => {
+    const prefix = typeof options?.prefix === 'string' ? options.prefix : 'sk';
+    return transformations.generateApiKey(prefix);
+  },
   generateRandomUsername: wrapGenerator(transformations.generateRandomUsername),
-  generateRandomEmail: wrapGenerator(() => transformations.generateRandomEmail()),
-  generateRandomPhone: wrapGenerator(() => transformations.generateRandomPhone()),
+  generateRandomEmail: (_input: string, options?: Record<string, unknown>) => {
+    const domain = typeof options?.domain === 'string' ? options.domain : 'example.com';
+    return transformations.generateRandomEmail(domain);
+  },
+  generateRandomPhone: (_input: string, options?: Record<string, unknown>) => {
+    const format = (options?.format as 'us' | 'international') || 'us';
+    return transformations.generateRandomPhone(format);
+  },
   generateRandomDate: wrapGenerator(() => transformations.generateRandomDate()),
-  generateTestCreditCard: wrapGenerator(() => transformations.generateTestCreditCard()),
+  generateTestCreditCard: (_input: string, options?: Record<string, unknown>) => {
+    const type = (options?.type as 'visa' | 'mastercard' | 'amex') || 'visa';
+    return transformations.generateTestCreditCard(type);
+  },
+  generateRandomIntegers: (_input: string, options?: Record<string, unknown>) => {
+    const min = typeof options?.min === 'number' ? options.min : 1;
+    const max = typeof options?.max === 'number' ? options.max : 100;
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const unique = options?.unique === true;
+    return transformations.generateRandomIntegers(min, max, count, unique);
+  },
+  rollDice: (_input: string, options?: Record<string, unknown>) => {
+    const sidesRaw = options?.sides;
+    const sides = typeof sidesRaw === 'number' ? sidesRaw : (typeof sidesRaw === 'string' ? parseInt(sidesRaw, 10) : 6);
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const showTotal = options?.showTotal !== false;
+    return transformations.rollDice(sides, count, showTotal);
+  },
+  flipCoins: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    return transformations.flipCoins(count);
+  },
+  generateRandomTime: (_input: string, options?: Record<string, unknown>) => {
+    const format = (options?.format as '12h' | '24h') || '24h';
+    return transformations.generateRandomTime(format);
+  },
+  shuffleSequence: (_input: string, options?: Record<string, unknown>) => {
+    const start = typeof options?.start === 'number' ? options.start : 1;
+    const end = typeof options?.end === 'number' ? options.end : 10;
+    return transformations.shuffleSequence(start, end);
+  },
+  generateRandomDecimals: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const decimalPlaces = typeof options?.decimalPlaces === 'number' ? options.decimalPlaces : 2;
+    return transformations.generateRandomDecimals(count, decimalPlaces);
+  },
+  generateHexColors: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    return transformations.generateHexColors(count);
+  },
+  generateRandomBytes: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 16;
+    return transformations.generateRandomBytes(count);
+  },
+  pickFromList: (input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const unique = options?.unique !== false;
+    return transformations.pickFromList(input, count, unique);
+  },
 
   // Ciphers
   rot13: transformations.rot13,
