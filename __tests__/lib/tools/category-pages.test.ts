@@ -142,7 +142,7 @@ describe('Category Pages Data', () => {
 
     it('returns tools for generators category', () => {
       const tools = getToolsByCategorySlug('generators');
-      expect(tools.length).toBe(13);
+      expect(tools.length).toBe(22);
       tools.forEach((tool) => {
         expect(tool.categoryId).toBe('generators');
       });
@@ -187,16 +187,16 @@ describe('Category Pages Data', () => {
       expect(colors?.toolCount).toBe(11);
 
       const generators = categories.find((c) => c.slug === 'generators');
-      expect(generators?.toolCount).toBe(13);
+      expect(generators?.toolCount).toBe(22);
 
       const ciphers = categories.find((c) => c.slug === 'ciphers');
       expect(ciphers?.toolCount).toBe(15);
     });
 
-    it('total tool count is 104', () => {
+    it('total tool count is 113', () => {
       const categories = getAllCategoriesWithCounts();
       const total = categories.reduce((sum, c) => sum + c.toolCount, 0);
-      expect(total).toBe(104);
+      expect(total).toBe(113);
     });
   });
 

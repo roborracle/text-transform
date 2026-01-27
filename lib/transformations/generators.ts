@@ -249,3 +249,208 @@ export function generateSlug(words: number = 3): string {
 export function generateApiKey(prefix: string = 'sk'): string {
   return `${prefix}_${generateRandomString(32, 'alphanumeric')}`
 }
+
+/**
+ * Generate random integers within a range (random.org style)
+ */
+export function generateRandomIntegers(
+  min: number = 1,
+  max: number = 100,
+  count: number = 1,
+  unique: boolean = false
+): string {
+  if (min > max) [min, max] = [max, min]
+  const range = max - min + 1
+
+  if (unique && count > range) {
+    return `Error: Cannot generate ${count} unique numbers in range ${min}-${max}`
+  }
+
+  const results: number[] = []
+  const used = new Set<number>()
+
+  while (results.length < count) {
+    const num = min + secureRandomInt(range)
+    if (unique) {
+      if (!used.has(num)) {
+        used.add(num)
+        results.push(num)
+      }
+    } else {
+      results.push(num)
+    }
+  }
+
+  return results.join(', ')
+}
+
+/**
+ * Roll dice (random.org style)
+ */
+export function rollDice(
+  sides: number = 6,
+  count: number = 1,
+  showTotal: boolean = true
+): string {
+  const validSides = [4, 6, 8, 10, 12, 20, 100]
+  if (!validSides.includes(sides)) {
+    sides = 6
+  }
+
+  const rolls: number[] = []
+  for (let i = 0; i < count; i++) {
+    rolls.push(secureRandomInt(sides) + 1)
+  }
+
+  const total = rolls.reduce((sum, n) => sum + n, 0)
+  const rollsStr = rolls.join(', ')
+
+  if (showTotal && count > 1) {
+    return `Rolls: ${rollsStr}\nTotal: ${total}`
+  }
+  return rollsStr
+}
+
+/**
+ * Flip coins (random.org style)
+ */
+export function flipCoins(count: number = 1): string {
+  const results: string[] = []
+  let heads = 0
+  let tails = 0
+
+  for (let i = 0; i < count; i++) {
+    if (secureRandomInt(2) === 0) {
+      results.push('Heads')
+      heads++
+    } else {
+      results.push('Tails')
+      tails++
+    }
+  }
+
+  if (count === 1) {
+    return results[0]
+  }
+
+  return `Results: ${results.join(', ')}\nHeads: ${heads}, Tails: ${tails}`
+}
+
+/**
+ * Generate random time of day
+ */
+export function generateRandomTime(format: '12h' | '24h' = '24h'): string {
+  const hours = secureRandomInt(24)
+  const minutes = secureRandomInt(60)
+  const seconds = secureRandomInt(60)
+
+  if (format === '12h') {
+    const period = hours >= 12 ? 'PM' : 'AM'
+    const hour12 = hours % 12 || 12
+    return `${hour12}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`
+  }
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+}
+
+/**
+ * Shuffle a sequence of numbers
+ */
+export function shuffleSequence(start: number = 1, end: number = 10): string {
+  if (start > end) [start, end] = [end, start]
+
+  const sequence: number[] = []
+  for (let i = start; i <= end; i++) {
+    sequence.push(i)
+  }
+
+  // Fisher-Yates shuffle with secure random
+  for (let i = sequence.length - 1; i > 0; i--) {
+    const j = secureRandomInt(i + 1)
+    ;[sequence[i], sequence[j]] = [sequence[j], sequence[i]]
+  }
+
+  return sequence.join(', ')
+}
+
+/**
+ * Generate random decimal fractions
+ */
+export function generateRandomDecimals(
+  count: number = 1,
+  decimalPlaces: number = 2
+): string {
+  const results: string[] = []
+
+  for (let i = 0; i < count; i++) {
+    const num = secureRandomFloat()
+    results.push(num.toFixed(decimalPlaces))
+  }
+
+  return results.join(', ')
+}
+
+/**
+ * Generate random hex color codes (multiple)
+ */
+export function generateHexColors(count: number = 1): string {
+  const colors: string[] = []
+
+  for (let i = 0; i < count; i++) {
+    const r = secureRandomInt(256)
+    const g = secureRandomInt(256)
+    const b = secureRandomInt(256)
+    colors.push(`#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`.toUpperCase())
+  }
+
+  return colors.join('\n')
+}
+
+/**
+ * Generate random bytes (hex encoded)
+ */
+export function generateRandomBytes(count: number = 16): string {
+  const bytes: string[] = []
+
+  for (let i = 0; i < count; i++) {
+    bytes.push(secureRandomInt(256).toString(16).padStart(2, '0'))
+  }
+
+  return bytes.join('')
+}
+
+/**
+ * Pick random items from a list
+ */
+export function pickFromList(
+  input: string,
+  count: number = 1,
+  unique: boolean = true
+): string {
+  const items = input.split('\n').map(s => s.trim()).filter(s => s.length > 0)
+
+  if (items.length === 0) {
+    return 'Error: No items provided'
+  }
+
+  if (unique && count > items.length) {
+    return `Error: Cannot pick ${count} unique items from ${items.length} items`
+  }
+
+  const results: string[] = []
+  const used = new Set<number>()
+
+  while (results.length < count) {
+    const idx = secureRandomInt(items.length)
+    if (unique) {
+      if (!used.has(idx)) {
+        used.add(idx)
+        results.push(items[idx])
+      }
+    } else {
+      results.push(items[idx])
+    }
+  }
+
+  return results.join('\n')
+}

@@ -316,6 +316,51 @@ export const FUNCTION_REGISTRY: Record<string, TransformFunction> = {
     const type = (options?.type as 'visa' | 'mastercard' | 'amex') || 'visa';
     return transformations.generateTestCreditCard(type);
   },
+  generateRandomIntegers: (_input: string, options?: Record<string, unknown>) => {
+    const min = typeof options?.min === 'number' ? options.min : 1;
+    const max = typeof options?.max === 'number' ? options.max : 100;
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const unique = options?.unique === true;
+    return transformations.generateRandomIntegers(min, max, count, unique);
+  },
+  rollDice: (_input: string, options?: Record<string, unknown>) => {
+    const sidesRaw = options?.sides;
+    const sides = typeof sidesRaw === 'number' ? sidesRaw : (typeof sidesRaw === 'string' ? parseInt(sidesRaw, 10) : 6);
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const showTotal = options?.showTotal !== false;
+    return transformations.rollDice(sides, count, showTotal);
+  },
+  flipCoins: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    return transformations.flipCoins(count);
+  },
+  generateRandomTime: (_input: string, options?: Record<string, unknown>) => {
+    const format = (options?.format as '12h' | '24h') || '24h';
+    return transformations.generateRandomTime(format);
+  },
+  shuffleSequence: (_input: string, options?: Record<string, unknown>) => {
+    const start = typeof options?.start === 'number' ? options.start : 1;
+    const end = typeof options?.end === 'number' ? options.end : 10;
+    return transformations.shuffleSequence(start, end);
+  },
+  generateRandomDecimals: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const decimalPlaces = typeof options?.decimalPlaces === 'number' ? options.decimalPlaces : 2;
+    return transformations.generateRandomDecimals(count, decimalPlaces);
+  },
+  generateHexColors: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    return transformations.generateHexColors(count);
+  },
+  generateRandomBytes: (_input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 16;
+    return transformations.generateRandomBytes(count);
+  },
+  pickFromList: (input: string, options?: Record<string, unknown>) => {
+    const count = typeof options?.count === 'number' ? options.count : 1;
+    const unique = options?.unique !== false;
+    return transformations.pickFromList(input, count, unique);
+  },
 
   // Ciphers
   rot13: transformations.rot13,
