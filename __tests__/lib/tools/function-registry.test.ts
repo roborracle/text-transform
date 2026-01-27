@@ -105,7 +105,7 @@ describe('Function Registry', () => {
 
     it('generateUUIDv4 generates valid UUID', () => {
       const fn = getTransformFunction('generateUUIDv4');
-      const result = fn?.('');
+      const result = fn?.('', { count: 1 });
       expect(result).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
       );
@@ -113,8 +113,14 @@ describe('Function Registry', () => {
 
     it('generateULID generates valid ULID', () => {
       const fn = getTransformFunction('generateULID');
-      const result = fn?.('');
+      const result = fn?.('', { count: 1 });
       expect(result).toHaveLength(26);
+    });
+
+    it('generateNanoID generates valid NanoID', () => {
+      const fn = getTransformFunction('generateNanoID');
+      const result = fn?.('', { count: 1 });
+      expect(result).toHaveLength(21);
     });
 
     it('decodeJWT decodes valid JWT', () => {
@@ -160,7 +166,7 @@ describe('Function Registry', () => {
 
     it('generateRandomHexColor generates valid hex', () => {
       const fn = getTransformFunction('generateRandomHexColor');
-      const result = fn?.('');
+      const result = fn?.('', { count: 1 });
       expect(result).toMatch(/^#[0-9a-f]{6}$/);
     });
   });
@@ -168,7 +174,7 @@ describe('Function Registry', () => {
   describe('Generator functions', () => {
     it('generatePassword generates password with options', () => {
       const fn = getTransformFunction('generatePassword');
-      const result = fn?.('', { length: 20 });
+      const result = fn?.('', { length: 20, count: 1 });
       expect(result).toHaveLength(20);
     });
 
@@ -180,8 +186,14 @@ describe('Function Registry', () => {
 
     it('generateIPv4 generates valid IP', () => {
       const fn = getTransformFunction('generateIPv4');
-      const result = fn?.('');
+      const result = fn?.('', { count: 1 });
       expect(result).toMatch(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
+    });
+
+    it('generators support count option', () => {
+      const fn = getTransformFunction('generatePassword');
+      const result = fn?.('', { count: 5 });
+      expect(result?.split('\n').length).toBe(5);
     });
   });
 

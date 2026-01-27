@@ -166,8 +166,15 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateRandomHexColor');
 
       it('generates valid hex color', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^#[0-9a-f]{6}$/);
+      });
+
+      it('generates multiple colors with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => expect(line).toMatch(/^#[0-9a-f]{6}$/));
       });
 
       it('generates different colors', () => {
@@ -227,21 +234,25 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generatePassword');
 
       it('generates password with default length', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result?.length).toBe(16);
       });
 
       it('generates password with custom length', () => {
-        const result = fn?.('', { length: 32 });
+        const result = fn?.('', { length: 32, count: 1 });
         expect(result?.length).toBe(32);
       });
 
       it('generates unique passwords', () => {
-        const passwords = new Set();
-        for (let i = 0; i < 10; i++) {
-          passwords.add(fn?.(''));
-        }
-        expect(passwords.size).toBe(10);
+        const result = fn?.('', { count: 10 });
+        const passwords = result?.split('\n') || [];
+        const uniquePasswords = new Set(passwords);
+        expect(uniquePasswords.size).toBe(10);
+      });
+
+      it('generates multiple passwords with count option', () => {
+        const result = fn?.('', { count: 5 });
+        expect(result?.split('\n').length).toBe(5);
       });
     });
 
@@ -249,17 +260,24 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateIPv4');
 
       it('generates valid IPv4 address', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
       });
 
       it('generates addresses with valid octets', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         const octets = result?.split('.').map(Number);
         octets?.forEach((octet) => {
           expect(octet).toBeGreaterThanOrEqual(0);
           expect(octet).toBeLessThanOrEqual(255);
         });
+      });
+
+      it('generates multiple IPv4 addresses with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => expect(line).toMatch(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/));
       });
     });
 
@@ -267,8 +285,15 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateIPv6');
 
       it('generates valid IPv6 address', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^[0-9a-f]{4}(:[0-9a-f]{4}){7}$/);
+      });
+
+      it('generates multiple IPv6 addresses with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => expect(line).toMatch(/^[0-9a-f]{4}(:[0-9a-f]{4}){7}$/));
       });
     });
 
@@ -276,8 +301,15 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateMacAddress');
 
       it('generates valid MAC address', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^[0-9a-f]{2}(:[0-9a-f]{2}){5}$/);
+      });
+
+      it('generates multiple MAC addresses with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => expect(line).toMatch(/^[0-9a-f]{2}(:[0-9a-f]{2}){5}$/));
       });
     });
 
@@ -304,18 +336,23 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateRandomString');
 
       it('generates alphanumeric by default', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^[a-zA-Z0-9]+$/);
       });
 
       it('generates hex characters', () => {
-        const result = fn?.('', { charset: 'hex' });
+        const result = fn?.('', { charset: 'hex', count: 1 });
         expect(result).toMatch(/^[0-9a-f]+$/);
       });
 
       it('respects length option', () => {
-        const result = fn?.('', { length: 64 });
+        const result = fn?.('', { length: 64, count: 1 });
         expect(result?.length).toBe(64);
+      });
+
+      it('generates multiple results with count option', () => {
+        const result = fn?.('', { count: 5 });
+        expect(result?.split('\n').length).toBe(5);
       });
     });
 
@@ -323,13 +360,18 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateSlug');
 
       it('generates URL-friendly slug', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^[a-z]+-[a-z]+-[a-z]+$/);
       });
 
       it('respects word count option', () => {
-        const result = fn?.('', { words: 5 });
+        const result = fn?.('', { words: 5, count: 1 });
         expect(result?.split('-').length).toBe(5);
+      });
+
+      it('generates multiple slugs with count option', () => {
+        const result = fn?.('', { count: 5 });
+        expect(result?.split('\n').length).toBe(5);
       });
     });
 
@@ -337,8 +379,15 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateApiKey');
 
       it('generates key with default prefix', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^sk_[a-zA-Z0-9]+$/);
+      });
+
+      it('generates multiple keys with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => expect(line).toMatch(/^sk_[a-zA-Z0-9]+$/));
       });
     });
 
@@ -346,8 +395,15 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateRandomEmail');
 
       it('generates valid email format', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^[a-z]+@example\.com$/);
+      });
+
+      it('generates multiple emails with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => expect(line).toMatch(/^[a-z]+@example\.com$/));
       });
     });
 
@@ -355,8 +411,15 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateRandomUsername');
 
       it('generates username with adjective and noun', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^[a-z]+_[a-z]+\d+$/);
+      });
+
+      it('generates multiple usernames with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => expect(line).toMatch(/^[a-z]+_[a-z]+\d+$/));
       });
     });
 
@@ -364,13 +427,23 @@ describe('Batch 2 Tools', () => {
       const fn = getTransformFunction('generateTestCreditCard');
 
       it('generates 16-digit number', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(result).toMatch(/^\d{16}$/);
       });
 
       it('generates Luhn-valid number', () => {
-        const result = fn?.('');
+        const result = fn?.('', { count: 1 });
         expect(luhnCheck(result || '')).toBe(true);
+      });
+
+      it('generates multiple credit cards with count option', () => {
+        const result = fn?.('', { count: 5 });
+        const lines = result?.split('\n') || [];
+        expect(lines.length).toBe(5);
+        lines.forEach(line => {
+          expect(line).toMatch(/^\d{16}$/);
+          expect(luhnCheck(line)).toBe(true);
+        });
       });
     });
 

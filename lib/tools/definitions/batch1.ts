@@ -396,8 +396,18 @@ export const CRYPTO_TOOLS: Tool[] = [
     transformFn: 'generateUUIDv4',
     isGenerator: true,
     keywords: ['uuid', 'guid', 'unique', 'identifier', 'random'],
-    inputPlaceholder: 'Click Transform to generate a UUID...',
-    outputPlaceholder: 'UUID will appear here (e.g., 550e8400-e29b-41d4-a716-446655440000)...',
+    options: [
+      {
+        key: 'count',
+        label: 'How Many',
+        type: 'number',
+        defaultValue: 10,
+        min: 1,
+        max: 100,
+      },
+    ],
+    inputPlaceholder: 'Click Generate to create UUIDs...',
+    outputPlaceholder: 'UUIDs will appear here...',
   },
   {
     id: 'generate-ulid',
@@ -408,8 +418,18 @@ export const CRYPTO_TOOLS: Tool[] = [
     transformFn: 'generateULID',
     isGenerator: true,
     keywords: ['ulid', 'unique', 'identifier', 'sortable', 'random'],
-    inputPlaceholder: 'Click Transform to generate a ULID...',
-    outputPlaceholder: 'ULID will appear here (26 characters)...',
+    options: [
+      {
+        key: 'count',
+        label: 'How Many',
+        type: 'number',
+        defaultValue: 10,
+        min: 1,
+        max: 100,
+      },
+    ],
+    inputPlaceholder: 'Click Generate to create ULIDs...',
+    outputPlaceholder: 'ULIDs will appear here...',
   },
   {
     id: 'generate-nanoid',
@@ -422,6 +442,14 @@ export const CRYPTO_TOOLS: Tool[] = [
     keywords: ['nanoid', 'unique', 'identifier', 'compact', 'random'],
     options: [
       {
+        key: 'count',
+        label: 'How Many',
+        type: 'number',
+        defaultValue: 10,
+        min: 1,
+        max: 100,
+      },
+      {
         key: 'size',
         label: 'Length',
         type: 'number',
@@ -430,8 +458,8 @@ export const CRYPTO_TOOLS: Tool[] = [
         max: 100,
       },
     ],
-    inputPlaceholder: 'Click Transform to generate a NanoID...',
-    outputPlaceholder: 'NanoID will appear here...',
+    inputPlaceholder: 'Click Generate to create NanoIDs...',
+    outputPlaceholder: 'NanoIDs will appear here...',
   },
   {
     id: 'decode-jwt',
