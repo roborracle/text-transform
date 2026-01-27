@@ -255,6 +255,7 @@ export function TransformPanel({
     realtime,
     initialOptions,
     maxInputSize,
+    isGenerator,
   });
 
   // Toast notifications
